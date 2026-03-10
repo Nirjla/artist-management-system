@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -31,17 +32,31 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|lowercase|email|max:255|unique:'.User::class,
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'phone' => 'required|numeric|digits:10',
+            'dob' => 'required|date',
+            'gender' => 'required|in:m,f,o',
+            'address' => 'required|string',
         ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+        DB::insert("insert into users (first_name, last_name, email, password, phone, dob, gender, address, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+            $request->first_name,
+            $request->last_name,
+            $request->email,
+            Hash::make($request->password),
+            $request->phone,
+            $request->dob,
+            $request->gender,
+            $request->address,
+            now(),
+            now()
         ]);
-
+        $results = DB::select("select * from users where email = ?", [$request->email]);
+        $user = !empty($results) ? $results[0] : null;
         event(new Registered($user));
 
         Auth::login($user);
