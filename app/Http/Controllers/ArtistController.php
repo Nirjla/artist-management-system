@@ -49,7 +49,7 @@ class ArtistController extends Controller
         $request->validate([
             'name' => 'required|string:maax:150',
             'dob' => 'required|date',
-            'gender' => 'required|in;m,f,o',
+            'gender' => 'required|in:m,f,o',
             'address' => 'required|string',
             'first_release_year' => 'required|integer|min:1900|max:' . date('Y'),
             'no_of_albums_released' => 'required|integer|min:0'
