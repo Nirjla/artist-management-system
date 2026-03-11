@@ -44,14 +44,15 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         $result = DB::select("select * from users where email = ? limit 1", [$this->email]);
-        $user = !empty($result) ? $result[0] : null;
-        if (empty($user) || !Hash::check($this->password, $user->password)) {
+        $userData = !empty($result) ? $result[0] : null;
+        if (empty($userData) || !Hash::check($this->password, $userData->password)) {
             RateLimiter::clear($this->throttleKey());
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
         }
-        Auth::login($user);
+        $user = \App\Models\User::find($userData->id);
+        Auth::login($user, $this->boolean('remember'));
     }
 
     /**
