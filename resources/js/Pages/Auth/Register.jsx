@@ -7,10 +7,15 @@ import { Head, Link, useForm } from '@inertiajs/react';
 
 export default function Register() {
     const { data, setData, post, processing, errors, reset } = useForm({
-        name: '',
+        first_name: '',
+        last_name: '',
         email: '',
         password: '',
         password_confirmation: '',
+        phone: '',
+        dob: '',
+        gender: '',
+        address: '',
     });
 
     const submit = (e) => {
@@ -27,20 +32,36 @@ export default function Register() {
 
             <form onSubmit={submit}>
                 <div>
-                    <InputLabel htmlFor="name" value="Name" />
+                    <InputLabel htmlFor="first_name" value="First Name" />
 
                     <TextInput
-                        id="name"
-                        name="name"
-                        value={data.name}
+                        id="first_name"
+                        name="first_name"
+                        value={data.first_name}
                         className="mt-1 block w-full"
                         autoComplete="name"
                         isFocused={true}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData('first_name', e.target.value)}
                         required
                     />
 
-                    <InputError message={errors.name} className="mt-2" />
+                    <InputError message={errors.first_name} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="last_name" value="Last Name" />
+
+                    <TextInput
+                        id="last_name"
+                        name="last_name"
+                        value={data.last_name}
+                        className="mt-1 block w-full"
+                        autoComplete="name"
+                        onChange={(e) => setData('last_name', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.last_name} className="mt-2" />
                 </div>
 
                 <div className="mt-4">
@@ -101,7 +122,75 @@ export default function Register() {
                         className="mt-2"
                     />
                 </div>
+                <div className="mt-4">
+                    <InputLabel htmlFor="phone" value="Phone" />
 
+                    <TextInput
+                        id="phone"
+                        name="phone"
+                        value={data.phone}
+                        className="mt-1 block w-full"
+                        autoComplete="phone"
+                        onChange={(e) => setData('phone', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.phone} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="dob" value="Date of Birth" />
+
+                    <TextInput
+                        id="dob"
+                        type="date"
+                        name="dob"
+                        value={data.dob}
+                        className="mt-1 block w-full"
+                        autoComplete="dob"
+                        onChange={(e) => setData('dob', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.dob} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="gender" value="Gender" />
+
+                    <Select
+                        id="gender"
+                        name="gender"
+                        value={data.gender}
+                        className="mt-1 block w-full"
+                        autoComplete="gender"
+                        onChange={(e) => setData('gender', e.target.value)}
+                        required
+                    >
+                        <option value="">Select Gender</option>
+                        <option value="m">Male</option>
+                        <option value="f">Female</option>
+                        <option value="o">Other</option>
+                    </Select>
+
+                    <InputError message={errors.gender} className="mt-2" />
+                </div>
+
+                <div className="mt-4">
+                    <InputLabel htmlFor="address" value="Address" />
+
+                    <TextInput
+                        id="address"
+                        name="address"
+                        value={data.address}
+                        className="mt-1 block w-full"
+                        autoComplete="address"
+                        onChange={(e) => setData('address', e.target.value)}
+                        required
+                    />
+
+                    <InputError message={errors.address} className="mt-2" />
+                </div>
                 <div className="mt-4 flex items-center justify-end">
                     <Link
                         href={route('login')}
