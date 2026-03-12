@@ -4,20 +4,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
         Schema::create('music', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('artist_id')->constrained()->cascadeOnDelete();
+            $table->uuid('id')->primary();
+            $table->foreignUuid('artist_id')->constrained()->cascadeOnDelete();
             $table->string('title');
             $table->string('album_name');
-            $table->enum('genre',['rnb', 'country', 'classic', 'rock', 'jazz']);
-            
+            $table->enum('genre', ['rnb', 'country', 'classic', 'rock', 'jazz']);
+
             $table->timestamps();
         });
     }
