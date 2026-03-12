@@ -32,14 +32,14 @@ class RegisteredUserController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => 'required|string|min:2|max:20|regex:/^[a-zA-Z ]+$/',
+            'last_name' => 'required|string|min:2|max:20|regex:/^[a-zA-Z ]+$/',
             'email' => 'required|string|lowercase|email|max:255|unique:' . User::class,
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'phone' => 'required|numeric|digits:10',
             'dob' => 'required|date',
             'gender' => 'required|in:m,f,o',
-            'address' => 'required|string',
+            'address' => 'required|string|min:2|max:10',
         ]);
 
         DB::insert("insert into users (first_name, last_name, email, password, phone, dob, gender, address, created_at, updated_at) 
@@ -59,8 +59,9 @@ class RegisteredUserController extends Controller
         $user = !empty($results) ? $results[0] : null;
         event(new Registered($user));
 
-        Auth::login($user);
+        // Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        return redirect(route('login', absolute: false));
     }
+
 }
