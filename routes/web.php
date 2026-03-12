@@ -24,7 +24,7 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::get('/artist', [ArtistController::class, 'index'])->name('artist.index');
     Route::post('/artist', [ArtistController::class, 'store'])->name('artist.store');
-    Route::put('/artist/{id}', [ArtistController::class, 'update'])->name('artist.update');
+    Route::patch('/artist/{id}', [ArtistController::class, 'update'])->name('artist.update');
     Route::delete('/artist/{id}', [ArtistController::class, 'destroy'])->name('artist.destroy');
     Route::get('/artist/export', [ArtistController::class, 'export'])->name('artist.export');
     Route::get('/artists/import', [ArtistController::class, 'import'])->name('artist.import');
