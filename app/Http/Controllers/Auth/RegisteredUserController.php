@@ -13,6 +13,8 @@ use Illuminate\Validation\Rules;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Inertia\Response;
+use Illuminate\Support\Str;
+
 
 class RegisteredUserController extends Controller
 {
@@ -39,11 +41,12 @@ class RegisteredUserController extends Controller
             'phone' => 'required|numeric|digits:10',
             'dob' => 'required|date',
             'gender' => 'required|in:m,f,o',
-            'address' => 'required|string|min:2|max:10',
+            'address' => 'required|string|min:2|max:10|regex:/^[a-zA-Z ]+$/',
         ]);
 
-        DB::insert("insert into users (first_name, last_name, email, password, phone, dob, gender, address, created_at, updated_at) 
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+        DB::insert("insert into users (id, first_name, last_name, email, password, phone, dob, gender, address, created_at, updated_at) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", [
+            (string) Str::uuid(),
             $request->first_name,
             $request->last_name,
             $request->email,
@@ -55,6 +58,7 @@ class RegisteredUserController extends Controller
             now(),
             now()
         ]);
+
         $results = DB::select("select * from users where email = ?", [$request->email]);
         $user = !empty($results) ? $results[0] : null;
         event(new Registered($user));
