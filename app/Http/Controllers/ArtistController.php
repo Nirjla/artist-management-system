@@ -74,4 +74,61 @@ class ArtistController extends Controller
         DB::delete("delete from artists where id = ?", [$id]);
         return redirect()->route("artist.index")->with("success", "Artist deleted successfully");
     }
+
+    public function export()
+    {
+        $artists = DB::select("select name, dob , gender, address, first_release_year, no_ofalbums_releases from artists");
+
+        $filename = "artists_export_" . date('Y-m-d') . ".csv";
+        $handle = fopen('php://temp', 'w');
+
+        header('Content-Type: text/csv');
+        header('Content-Disposition: attachment; filename="' . $filename . '"');
+
+        fputcsv($handle, ['Name', 'DOB', 'Gender', 'Address', 'First Release Year', 'No. of Albums Released']);
+
+        foreach ($artists as $artist) {
+            fputcsv($handle, [
+                $artist->name,
+                $artist->dob,
+                $artist->gender,
+                $artist->address,
+                $artist->first_release_year,
+                $artist->no_of_albums_released
+            ]);
+        }
+
+        fclose($handle);
+    }
+
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:csv|max:2048'
+        ]);
+
+        $file = $request->file('file');
+        $handle = fopen($file->getPathname(), 'r');
+
+        fgetcsv($handle);
+
+        while (($row = fgetcsv($handle)) !== false) {
+            DB::insert("insert into artists (name, dob, gender, address, first_release_year, no_of_albums_released, created_at, updated_at) 
+                values (?, ?, ?, ?, ?, ?, ?, ?)", [
+                $row[0],
+                $row[1],
+                $row[2],
+                $row[3],
+                $row[4],
+                $row[5],
+                now(),
+                now()
+            ]);
+        }
+
+        fclose($handle);
+
+        return redirect()->route("artist.index")->with("success", "Artists imported successfully");
+    }
 }
